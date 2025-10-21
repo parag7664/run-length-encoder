@@ -37,6 +37,8 @@ public class Exercise {
         int decodedLen = decodeInPlace(input, newLen);
         System.out.println(java.util.Arrays.toString(java.util.Arrays.copyOf(input, decodedLen))); // Output: [a, a, b, b, b, c]
 
+        String longInputEncodedResult = encodeForLongInput(input);
+        System.out.println(longInputEncodedResult);
     }
 
     //O(n) O(n)
@@ -173,5 +175,32 @@ public class Exercise {
         // Copying decoded data back
         System.arraycopy(temp, 0, input, 0, writeIdx);
         return writeIdx;
+    }
+
+    private static final int MAX_RUN = 999_999_999; // For 9-digit counts per run
+
+    /**
+     * splitting runs longer than MAX_RUN into multiple chunks.
+     * Example: For 1_000_000_001 'a' chars, output will be "a999999999a1".
+     */
+    public static String encodeForLongInput(char[] input) {
+        if (input == null || input.length == 0) return "";
+
+        StringBuilder encoded = new StringBuilder();
+        long count = 1;
+        for (int i = 1; i < input.length; i++) {
+            if (input[i] == input[i - 1]) {
+                count++;
+                if (count > MAX_RUN) {
+                    encoded.append(input[i - 1]).append(MAX_RUN);
+                    count = 1;
+                }
+            } else {
+                encoded.append(input[i - 1]).append(count);
+                count = 1;
+            }
+        }
+        encoded.append(input[input.length - 1]).append(count);
+        return encoded.toString();
     }
 }
